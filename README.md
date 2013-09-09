@@ -1,4 +1,8 @@
-# Swiftmailer Filter Plugin [![Build Status](https://travis-ci.org/OpenBuildings/swiftmailer-filter.png?branch=master)](https://travis-ci.org/OpenBuildings/swiftmailer-filter) [![Coverage Status](https://coveralls.io/repos/OpenBuildings/swiftmailer-filter/badge.png?branch=master)](https://coveralls.io/r/OpenBuildings/swiftmailer-filter?branch=master)
+# Swiftmailer Filter Plugin 
+
+[![Build Status](https://travis-ci.org/OpenBuildings/swiftmailer-filter.png?branch=master)](https://travis-ci.org/OpenBuildings/swiftmailer-filter)
+[![Coverage Status](https://coveralls.io/repos/OpenBuildings/swiftmailer-filter/badge.png?branch=master)](https://coveralls.io/r/OpenBuildings/swiftmailer-filter?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/openbuildings/swiftmailer-filter/v/stable.png)](https://packagist.org/packages/openbuildings/swiftmailer-filter)
 
 A swiftmailer plugin that allows whitelist / blacklist to which emails to perform the sends. This is useful for example when you want to allow emails only to a certain domain in testing / staging
 

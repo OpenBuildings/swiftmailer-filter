@@ -3,8 +3,8 @@
 namespace Openbuildings\Swiftmailer;
 
 /**
- * @package    Openbuildings\Swiftmailer
- * @author     Ivan Kerin
+ * @package    openbuildings\swiftmailer-filter
+ * @author     Ivan Kerin <ikerin@gmail.com>
  * @copyright  (c) 2013 OpenBuildings Ltd.
  * @license    http://spdx.org/licenses/BSD-3-Clause
  */
