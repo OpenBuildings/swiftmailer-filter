@@ -143,11 +143,11 @@ class FilterPlugin implements \Swift_Events_SendListener
 	{
 		$message = $evt->getMessage();
 
-		$message->setTo(FilterPlugin::filterEmailArray($this->getWhitelist(), $this->getBlacklist(), $message->getTo()));
+		$message->setTo(FilterPlugin::filterEmailArray($this->getWhitelist(), $this->getBlacklist(), (array) $message->getTo()));
 
-		$message->setCc(FilterPlugin::filterEmailArray($this->getWhitelist(), $this->getBlacklist(), $message->getCc()));
+		$message->setCc(FilterPlugin::filterEmailArray($this->getWhitelist(), $this->getBlacklist(), (array) $message->getCc()));
 
-		$message->setBcc(FilterPlugin::filterEmailArray($this->getWhitelist(), $this->getBlacklist(), $message->getBcc()));
+		$message->setBcc(FilterPlugin::filterEmailArray($this->getWhitelist(), $this->getBlacklist(), (array) $message->getBcc()));
 	}
 
 	/**

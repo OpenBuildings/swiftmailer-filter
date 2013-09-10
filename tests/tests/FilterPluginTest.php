@@ -29,6 +29,47 @@ class FilterPluginTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(array(), $message->getBcc());
 	}
 
+	public function test_integration_with_empty_cc()
+	{
+		$mailer = Swift_Mailer::newInstance(Swift_NullTransport::newInstance());
+
+		$mailer->registerPLugin(new FilterPlugin('example.com', 'test4@example.com'));
+
+		$message = Swift_Message::newInstance();
+
+		$message->setFrom('test@example.com');
+		$message->setTo('test2@example.com');
+		$message->setBcc(array('test4@example.com', 'test5@example.com', 'test6@example-public.com'));
+		$message->setSubject('Test');
+		$message->setBody('Test Email');
+
+		$mailer->send($message);
+
+		$this->assertEquals(array('test2@example.com' => ''), $message->getTo());
+		$this->assertEquals(array(), $message->getCc());
+		$this->assertEquals(array('test5@example.com' => ''), $message->getBcc());
+	}
+
+	public function test_integration_with_empty_cc_and_bcc()
+	{
+		$mailer = Swift_Mailer::newInstance(Swift_NullTransport::newInstance());
+
+		$mailer->registerPLugin(new FilterPlugin('example.com', 'test4@example.com'));
+
+		$message = Swift_Message::newInstance();
+
+		$message->setFrom('test@example.com');
+		$message->setTo('test2@example.com');
+		$message->setSubject('Test');
+		$message->setBody('Test Email');
+
+		$mailer->send($message);
+
+		$this->assertEquals(array('test2@example.com' => ''), $message->getTo());
+		$this->assertEquals(array(), $message->getCc());
+		$this->assertEquals(array(), $message->getBcc());
+	}
+
 	public function data_emailMatches()
 	{
 		return array(
