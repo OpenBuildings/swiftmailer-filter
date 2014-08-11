@@ -54,6 +54,9 @@ class FilterPluginTest extends PHPUnit_Framework_TestCase {
 	{
 		$mailer = Swift_Mailer::newInstance(Swift_NullTransport::newInstance());
 
+		$test_listener = new TestListener();
+
+		$mailer->registerPLugin($test_listener);
 		$mailer->registerPLugin(new FilterPlugin('example.com', 'test4@example.com'));
 
 		$message = Swift_Message::newInstance();
@@ -68,6 +71,34 @@ class FilterPluginTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(array('test2@example.com' => ''), $message->getTo());
 		$this->assertEquals(array(), $message->getCc());
 		$this->assertEquals(array(), $message->getBcc());
+
+		$this->assertInstanceOf('Swift_Events_SendEvent', $test_listener->event());
+		$this->assertEquals(\Swift_Events_SendEvent::RESULT_SUCCESS, $test_listener->event()->getResult());
+	}
+
+	public function test_integration_filtered()
+	{
+		$mailer = Swift_Mailer::newInstance(Swift_NullTransport::newInstance());
+		$test_listener = new TestListener();
+
+		$mailer->registerPLugin($test_listener);
+		$mailer->registerPLugin(new FilterPlugin('example.com', 'test2@example.com'));
+
+		$message = Swift_Message::newInstance();
+
+		$message->setFrom('test@example.com');
+		$message->setTo('test2@example.com');
+		$message->setSubject('Test');
+		$message->setBody('Test Email');
+
+		$mailer->send($message);
+
+		$this->assertEquals(array(), $message->getTo());
+		$this->assertEquals(array(), $message->getCc());
+		$this->assertEquals(array(), $message->getBcc());
+
+		$this->assertInstanceOf('Swift_Events_SendEvent', $test_listener->event());
+		$this->assertEquals(\Swift_Events_SendEvent::RESULT_PENDING, $test_listener->event()->getResult());
 	}
 
 	public function data_emailMatches()
@@ -88,7 +119,7 @@ class FilterPluginTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function test_emailMatches($email, $match, $expected, $exception)
 	{
-		if ($exception) 
+		if ($exception)
 		{
 			$this->setExpectedException('Exception', $exception);
 			FilterPlugin::emailMatches($email, $match);

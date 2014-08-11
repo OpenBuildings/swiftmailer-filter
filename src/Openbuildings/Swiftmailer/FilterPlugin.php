@@ -12,15 +12,15 @@ class FilterPlugin implements \Swift_Events_SendListener
 {
 	/**
 	 * Check if an email matches a given other email or domain
-	 * @param  string $email 
+	 * @param  string $email
 	 * @param  string $match email or domain
-	 * @return boolean        
+	 * @return boolean
 	 */
 	public static function emailMatches($email, $match)
 	{
 		if ( ! filter_var($email, FILTER_VALIDATE_EMAIL))
 			throw new \Exception("Cannot match with '{$match}': '{$email}' is not a valid email");
-			
+
 		if (strpos($match, '@') === FALSE)
 		{
 			list($email_name, $email_domain) = explode('@', $email);
@@ -35,9 +35,9 @@ class FilterPlugin implements \Swift_Events_SendListener
 
 	/**
 	 * Check if a given email matches an array of emails or domains
-	 * @param  string $email       
-	 * @param  array  $match_array 
-	 * @return boolean              
+	 * @param  string $email
+	 * @param  array  $match_array
+	 * @return boolean
 	 */
 	public static function emailMatchesArray($email, array $match_array)
 	{
@@ -53,7 +53,7 @@ class FilterPlugin implements \Swift_Events_SendListener
 	/**
 	 * Filter a swiftmailer email array, e.g. [email => name] with a whitelist and blacklist array (email or domains)
 	 * First the whitelist is applied, then the blacklist
-	 * 
+	 *
 	 * @param  array  $whitelist array of emails or domains
 	 * @param  array  $blacklist array of emails or domains
 	 * @param  array  $array     Swiftmailer array of emails
@@ -63,20 +63,20 @@ class FilterPlugin implements \Swift_Events_SendListener
 	{
 		if ($whitelist)
 		{
-			foreach ($array as $email => $name) 
+			foreach ($array as $email => $name)
 			{
-				if ( ! FilterPlugin::emailMatchesArray($email, $whitelist)) 
+				if ( ! FilterPlugin::emailMatchesArray($email, $whitelist))
 				{
 					unset($array[$email]);
 				}
 			}
 		}
 
-		if ($blacklist) 
+		if ($blacklist)
 		{
-			foreach ($array as $email => $name) 
+			foreach ($array as $email => $name)
 			{
-				if (FilterPlugin::emailMatchesArray($email, $blacklist)) 
+				if (FilterPlugin::emailMatchesArray($email, $blacklist))
 				{
 					unset($array[$email]);
 				}
@@ -96,7 +96,7 @@ class FilterPlugin implements \Swift_Events_SendListener
 
 	/**
 	 * Setter, array or string
-	 * @param array|string $whitelist 
+	 * @param array|string $whitelist
 	 */
 	public function setWhitelist($whitelist)
 	{
@@ -107,7 +107,7 @@ class FilterPlugin implements \Swift_Events_SendListener
 
 	/**
 	 * Getter
-	 * @return array 
+	 * @return array
 	 */
 	public function getWhitelist()
 	{
@@ -116,7 +116,7 @@ class FilterPlugin implements \Swift_Events_SendListener
 
 	/**
 	 * Setter, array or string
-	 * @param array|string $blacklist 
+	 * @param array|string $blacklist
 	 */
 	public function setBlacklist($blacklist)
 	{
@@ -127,7 +127,7 @@ class FilterPlugin implements \Swift_Events_SendListener
 
 	/**
 	 * Getter
-	 * @return array 
+	 * @return array
 	 */
 	public function getBlacklist()
 	{
@@ -143,11 +143,18 @@ class FilterPlugin implements \Swift_Events_SendListener
 	{
 		$message = $evt->getMessage();
 
-		$message->setTo(FilterPlugin::filterEmailArray($this->getWhitelist(), $this->getBlacklist(), (array) $message->getTo()));
+		$to = FilterPlugin::filterEmailArray($this->getWhitelist(), $this->getBlacklist(), (array) $message->getTo());
+		$cc = FilterPlugin::filterEmailArray($this->getWhitelist(), $this->getBlacklist(), (array) $message->getCc());
+		$bcc = FilterPlugin::filterEmailArray($this->getWhitelist(), $this->getBlacklist(), (array) $message->getBcc());
 
-		$message->setCc(FilterPlugin::filterEmailArray($this->getWhitelist(), $this->getBlacklist(), (array) $message->getCc()));
+		$message->setTo($to);
+		$message->setCc($cc);
+		$message->setBcc($bcc);
 
-		$message->setBcc(FilterPlugin::filterEmailArray($this->getWhitelist(), $this->getBlacklist(), (array) $message->getBcc()));
+		if ( ! ($to + $cc + $bcc))
+		{
+			$evt->cancelBubble();
+		}
 	}
 
 	/**

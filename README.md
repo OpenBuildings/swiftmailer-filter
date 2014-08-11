@@ -1,4 +1,4 @@
-# Swiftmailer Filter Plugin 
+# Swiftmailer Filter Plugin
 
 [![Build Status](https://travis-ci.org/OpenBuildings/swiftmailer-filter.png?branch=master)](https://travis-ci.org/OpenBuildings/swiftmailer-filter)
 [![Coverage Status](https://coveralls.io/repos/OpenBuildings/swiftmailer-filter/badge.png?branch=master)](https://coveralls.io/r/OpenBuildings/swiftmailer-filter?branch=master)
