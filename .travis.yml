@@ -1,17 +1,28 @@
 language: php
 
+sudo: false
+
 php:
-  - 5.3
   - 5.4
+  - 5.5
+  - 5.6
+  - 7
+  - hhvm
+
+cache:
+  directories:
+  - $HOME/.composer/cache
 
 notifications:
   email: false
   slack:
     secure: eqn0+sZhXCTpzWJbRG/0J8/nG5u4Tai5vyyCK/yo3sFLPNcGsMDKTy76vV/y/W2hThgyp9FhZErJZbvMzfCUGqDN5MuYV486vtLw08l3VaDqt3QsJzIYxD0aG9V3Y8HSg04nHe+UcRMmw+1BAJSdoo+5ClQX3NW8EexxlUqozn4=
 
-install:
+before_install:
   - composer selfupdate
-  - composer install --no-interaction
+
+install:
+  - composer install
 
 before_script:
   - mkdir -p build/logs
@@ -20,5 +31,5 @@ script:
   - phpunit --coverage-clover build/logs/clover.xml
 
 after_script:
-  - wget https://scrutinizer-ci.com/ocular.phar
-  - php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
+  - test -e build/logs/clover.xml && wget https://scrutinizer-ci.com/ocular.phar
+  - test -e build/logs/clover.xml && php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
