@@ -89,7 +89,9 @@ class FilterPlugin implements Swift_Events_SendListener
 		$message->setCc($cc);
 		$message->setBcc($bcc);
 
-		if (empty($to + $cc + $bcc))
+		$all = $to + $cc + $bcc;
+
+		if (empty($all))
 		{
 			$event->cancelBubble();
 		}
