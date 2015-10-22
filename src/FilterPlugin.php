@@ -26,7 +26,7 @@ class FilterPlugin implements Swift_Events_SendListener
 	 * @param array $whitelist
 	 * @param array $blacklist
 	 */
-	function __construct(array $whitelist = [], array $blacklist = [])
+	public function __construct(array $whitelist = [], array $blacklist = [])
 	{
 		$this->whitelist = new Matches($whitelist, Matches::TRUE_EMPTY);
 		$this->blacklist = new Matches($blacklist, Matches::FALSE_EMPTY);
