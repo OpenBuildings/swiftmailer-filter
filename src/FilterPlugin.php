@@ -22,14 +22,20 @@ class FilterPlugin implements Swift_Events_SendListener
 	 */
 	private $blacklist;
 
+    /**
+     * @var null|ExtraChecksInterface
+     */
+	private $extraChecks;
+
 	/**
 	 * @param array $whitelist
 	 * @param array $blacklist
 	 */
-	public function __construct(array $whitelist = [], array $blacklist = [])
+	public function __construct(array $whitelist = [], array $blacklist = [], ?ExtraChecksInterface $extraChecks = null)
 	{
 		$this->whitelist = new Matches($whitelist, Matches::TRUE_EMPTY);
 		$this->blacklist = new Matches($blacklist, Matches::FALSE_EMPTY);
+		$this->extraChecks = $extraChecks;
 	}
 
 	/**
@@ -50,7 +56,12 @@ class FilterPlugin implements Swift_Events_SendListener
 		foreach ($emails as $email => $name) {
 			if ($this->filterEmail($email)) {
 				unset($emails[$email]);
+				continue;
 			}
+
+			if ($this->extraChecks !== null && !$this->extraChecks->shouldReceiveEmails($email)) {
+                unset($emails[$email]);
+            }
 		}
 
 		return $emails;
@@ -107,3 +118,4 @@ class FilterPlugin implements Swift_Events_SendListener
 		// Do Nothing
 	}
 }
+
