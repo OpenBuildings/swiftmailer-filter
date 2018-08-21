@@ -2,6 +2,7 @@
 
 namespace Openbuildings\Swiftmailer;
 
+use Openbuildings\Swiftmailer\Filters\FilterInterface;
 use Swift_Events_SendListener;
 use Swift_Events_SendEvent;
 
@@ -12,30 +13,14 @@ use Swift_Events_SendEvent;
  */
 class FilterPlugin implements Swift_Events_SendListener
 {
-	/**
-	 * @var Matches
-	 */
-	private $whitelist;
-
-	/**
-	 * @var Matches
-	 */
-	private $blacklist;
-
     /**
-     * @var null|ExtraChecksInterface
+     * @var FilterInterface[]
      */
-	private $extraChecks;
+	private $filters;
 
-	/**
-	 * @param array $whitelist
-	 * @param array $blacklist
-	 */
-	public function __construct(array $whitelist = [], array $blacklist = [], ?ExtraChecksInterface $extraChecks = null)
+	public function __construct(array $filters = [])
 	{
-		$this->whitelist = new Matches($whitelist, Matches::TRUE_EMPTY);
-		$this->blacklist = new Matches($blacklist, Matches::FALSE_EMPTY);
-		$this->extraChecks = $extraChecks;
+		$this->filters = $filters;
 	}
 
 	/**
@@ -44,7 +29,14 @@ class FilterPlugin implements Swift_Events_SendListener
 	 */
 	public function filterEmail($email)
 	{
-		return ! $this->whitelist->equals($email) || $this->blacklist->equals($email);
+	    foreach ($this->filters as $filter) {
+	        $shouldKeepEmail = $filter->checkEmail($email);
+            if (!$shouldKeepEmail) {
+                return true;
+            }
+        }
+
+        return false;
 	}
 
 	/**
@@ -56,31 +48,10 @@ class FilterPlugin implements Swift_Events_SendListener
 		foreach ($emails as $email => $name) {
 			if ($this->filterEmail($email)) {
 				unset($emails[$email]);
-				continue;
 			}
-
-			if ($this->extraChecks !== null && !$this->extraChecks->shouldReceiveEmails($email)) {
-                unset($emails[$email]);
-            }
 		}
 
 		return $emails;
-	}
-
-	/**
-	 * @return Matches
-	 */
-	public function getWhitelist()
-	{
-		return $this->whitelist;
-	}
-
-	/**
-	 * @return Matches
-	 */
-	public function getBlacklist()
-	{
-		return $this->blacklist;
 	}
 
 	/**
