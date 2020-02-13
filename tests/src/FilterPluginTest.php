@@ -2,18 +2,18 @@
 
 namespace Openbuildings\Swiftmailer\Test;
 
-use PHPUnit_Framework_TestCase;
 use Openbuildings\Swiftmailer\FilterPlugin;
 use Openbuildings\Swiftmailer\Matches;
+use PHPUnit\Framework\TestCase;
 use Swift_Mailer;
 use Swift_NullTransport;
 use Swift_Message;
 use Swift_Events_SendEvent;
 
 /**
- * @coversDefaultClass Openbuildings\Swiftmailer\FilterPlugin
+ * @coversDefaultClass \Openbuildings\Swiftmailer\FilterPlugin
  */
-class FilterPluginTest extends PHPUnit_Framework_TestCase
+class FilterPluginTest extends TestCase
 {
 	/**
 	 * @covers ::beforeSendPerformed

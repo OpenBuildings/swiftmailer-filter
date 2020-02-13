@@ -2,13 +2,13 @@
 
 namespace Openbuildings\Swiftmailer\Test;
 
-use PHPUnit_Framework_TestCase;
 use Openbuildings\Swiftmailer\IsEqual;
+use PHPUnit\Framework\TestCase;
 
 /**
- * @coversDefaultClass Openbuildings\Swiftmailer\IsEqual
+ * @coversDefaultClass \Openbuildings\Swiftmailer\IsEqual
  */
-class IsEqualTest extends PHPUnit_Framework_TestCase
+class IsEqualTest extends TestCase
 {
 	/**
 	 * @covers ::__construct

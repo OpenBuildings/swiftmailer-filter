@@ -2,13 +2,13 @@
 
 namespace Openbuildings\Swiftmailer\Test;
 
-use PHPUnit_Framework_TestCase;
 use Openbuildings\Swiftmailer\IsDomainEqual;
+use PHPUnit\Framework\TestCase;
 
 /**
- * @coversDefaultClass Openbuildings\Swiftmailer\IsDomainEqual
+ * @coversDefaultClass \Openbuildings\Swiftmailer\IsDomainEqual
  */
-class IsDomainEqualTest extends PHPUnit_Framework_TestCase
+class IsDomainEqualTest extends TestCase
 {
 	/**
 	 * @covers ::__construct
