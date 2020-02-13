@@ -3,7 +3,8 @@
 namespace Openbuildings\Swiftmailer\Test;
 
 use Openbuildings\Swiftmailer\FilterPlugin;
-use Openbuildings\Swiftmailer\Matches;
+use Openbuildings\Swiftmailer\Filters\BlacklistFilter;
+use Openbuildings\Swiftmailer\Filters\WhiteListFilter;
 use PHPUnit\Framework\TestCase;
 use Swift_Mailer;
 use Swift_NullTransport;
@@ -23,7 +24,10 @@ class FilterPluginTest extends TestCase
 	{
 		$mailer = Swift_Mailer::newInstance(Swift_NullTransport::newInstance());
 
-		$mailer->registerPLugin(new FilterPlugin(['example.com'], ['test4@example.com']));
+		$mailer->registerPLugin(new FilterPlugin([
+			new WhiteListFilter(['example.com']),
+			new BlacklistFilter(['test4@example.com'])
+		]));
 
 		$message = Swift_Message::newInstance();
 
@@ -49,7 +53,10 @@ class FilterPluginTest extends TestCase
 	{
 		$mailer = Swift_Mailer::newInstance(Swift_NullTransport::newInstance());
 
-		$mailer->registerPLugin(new FilterPlugin(['example.com'], ['test4@example.com']));
+		$mailer->registerPLugin(new FilterPlugin([
+			new WhiteListFilter(['example.com']),
+			new BlacklistFilter(['test4@example.com'])
+		]));
 
 		$message = Swift_Message::newInstance();
 
@@ -77,7 +84,10 @@ class FilterPluginTest extends TestCase
 		$listener = new TestListener();
 
 		$mailer->registerPLugin($listener);
-		$mailer->registerPLugin(new FilterPlugin(['example.com'], ['test4@example.com']));
+		$mailer->registerPLugin(new FilterPlugin([
+			new WhiteListFilter(['example.com']),
+			new BlacklistFilter(['test4@example.com'])
+		]));
 
 		$message = Swift_Message::newInstance();
 
@@ -106,7 +116,10 @@ class FilterPluginTest extends TestCase
 		$listener = new TestListener();
 
 		$mailer->registerPLugin($listener);
-		$mailer->registerPLugin(new FilterPlugin(['example.com'], ['test2@example.com']));
+		$mailer->registerPLugin(new FilterPlugin([
+			new WhiteListFilter(['example.com']),
+			new BlacklistFilter(['test2@example.com'])
+		]));
 
 		$message = Swift_Message::newInstance();
 
@@ -123,26 +136,6 @@ class FilterPluginTest extends TestCase
 
 		$this->assertInstanceOf('Swift_Events_SendEvent', $listener->event());
 		$this->assertEquals(Swift_Events_SendEvent::RESULT_PENDING, $listener->event()->getResult());
-	}
-
-	/**
-	 * @covers ::__construct
-	 * @covers ::getWhitelist
-	 * @covers ::getBlacklist
-	 */
-	public function testConstructGettersAndSetters()
-	{
-		$filter = new FilterPlugin(['whitelist@example.com', 'whitelist.example.com'], ['blacklist@example.com']);
-
-		$this->assertEquals(
-			new Matches(['whitelist@example.com', 'whitelist.example.com'], true),
-			$filter->getWhitelist()
-		);
-
-		$this->assertEquals(
-			new Matches(['blacklist@example.com'], false),
-			$filter->getBlacklist()
-		);
 	}
 
 	public function dataFilterEmailArray()
@@ -229,7 +222,10 @@ class FilterPluginTest extends TestCase
 	 */
 	public function testFilterEmailArray($whitelist, $blacklist, $array, $expected)
 	{
-		$filter = new FilterPlugin($whitelist, $blacklist);
+		$filter = new FilterPlugin([
+			new WhiteListFilter($whitelist),
+			new BlacklistFilter($blacklist)
+		]);
 
 		$this->assertSame($expected, $filter->filterEmailArray($array));
 	}
