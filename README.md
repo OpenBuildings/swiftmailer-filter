@@ -12,15 +12,13 @@ A swiftmailer plugin that allows whitelist / blacklist to which emails to perfor
 ```php
 $mailer = Swift_Mailer::newInstance();
 
-$mailer->registerPLugin(new FilterPlugin(['example.com'], ['test4@example.com', 'test5@example.com']);
+$mailer->registerPLugin(new FilterPlugin([
+    new WhiteListFilter(['example.com']),
+    new BlacklistFilter(['test4@example.com, test5@example.com'])
+]));
 ```
 
-First argument is whitelist, second is blacklist, they both allow array of emails or domain names. If you assign a domain, all emails from that domain will be whitelisted / blacklisted.
-
-There are additional getters that you might use:
-
-- ``getWhitelist()``
-- ``getBlacklist()``
+First argument is whitelist filter, second is blacklist filter, they both allow array of emails or domain names. If you assign a domain, all emails from that domain will be whitelisted / blacklisted.
 
 ## License
 
